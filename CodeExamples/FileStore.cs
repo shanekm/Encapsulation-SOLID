@@ -9,6 +9,13 @@ using Xunit;
 namespace Ploeh.Samples.Encapsulation.CodeExamples
 {
     /* 
+        SOLID - why? - maintance
+            - not a framework
+            - not a library
+            - principles - object oriented design
+            - to make your more productive by making code maitainable
+            - solid addresses code smell
+
         1. Encapsulation - implementation hiding, used for so others can use your code easier    
         2. Why code sucks?
             - extremely difficult to read
