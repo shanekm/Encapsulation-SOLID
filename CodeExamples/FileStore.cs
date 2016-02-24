@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,23 +18,35 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             - solid addresses code smell
 
         1. Encapsulation - implementation hiding, used for so others can use your code easier    
-        2. Why code sucks?
-            - extremely difficult to read
-            - hard to add features
-            - maintainability difficut
-            - more time spent reading than writing code
-        3. Make API's understandable
-        4. CQS
-            Commands: return void (hide side effects)
-            Query: return objects T or T[]
-        5. Postel's Law - giving guarantess when OUT, be tolarent when IN
-            Conservative - OUT (strong) specific when send back to client (strong guarantee is good)
-            Liberal - IN (broad) - broad when accepting
-        6. Input
-            - protect invariants / invalid state can be corrupted - when creating new()
-            - FailFast - adding guard clause in constructor
-        7. Never return null
+            2. Why code sucks?
+                - extremely difficult to read
+                - hard to add features
+                - maintainability difficut
+                - more time spent reading than writing code
+            3. Make API's understandable
+            4. CQS
+                Commands: return void (hide side effects)
+                Query: return objects T or T[]
+            5. Postel's Law - giving guarantess when OUT, be tolarent when IN
+                Conservative - OUT (strong) specific when send back to client (strong guarantee is good)
+                Liberal - IN (broad) - broad when accepting
+            6. Input
+                - protect invariants / invalid state can be corrupted - when creating new()
+                - FailFast - adding guard clause in constructor
+            7. Never return null
      
+        2. SRP - how do you define SRP?
+            - a class should have only one reason to change (caching, writing, reading)
+            - FileStore - caching can change, logging can change, storing - bad! (Logging, Caching, Storage, Orchastration) => may change
+             FIX: take out all reasons for change and create new class for it
+                a. StoreLogger() => Saving(int id), Saved(int id), Reading(int id) etc
+                b. StoreCache() => AddOrUpdate, GetOrAdd etc
+            - each class should do one thing and do it well
+            - MessageStore - each has it's own reason to exist
+                a. StoreLogger
+                b. StoreCache
+                c. FileStore
+
     Refactoring:   
         1. CQS
         2. new() -> can the state of class be modified? get; set; empty?
@@ -88,6 +101,54 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
         public string GetFileName(int id)
         {
             return Path.Combine(this.WorkingDirectory, id + ".txt");
+        }
+    }
+
+    public class StoreCache
+    {
+        private readonly ConcurrentDictionary<int, string> cache;
+
+        public StoreCache()
+        {
+            this.cache = new ConcurrentDictionary<int, string>();
+        }
+
+        public void AddOrUpdate(int id, string message)
+        {
+            this.cache.AddOrUpdate(id, message, (i, s) => message);
+        }
+
+        public string GetOrAdd(int id, Func<int, string> messageFactory)
+        {
+            return this.cache.GetOrAdd(id, messageFactory);
+        }
+    }
+
+    public class StoreLogger
+    {
+        public void Saving(int id)
+        {
+            Log.Information("Saving message {id}.", id);
+        }
+
+        public void Saved(int id)
+        {
+            Log.Information("Saved message {id}.", id);
+        }
+
+        public void Reading(int id)
+        {
+            Log.Debug("Reading message {id}.", id);
+        }
+
+        public void DidNotFind(int id)
+        {
+            Log.Debug("No message {id} found.", id);
+        }
+
+        public void Returning(int id)
+        {
+            Log.Debug("Returning message {id}.", id);
         }
     }
 }
