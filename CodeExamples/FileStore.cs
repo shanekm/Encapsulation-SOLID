@@ -28,7 +28,29 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 - protect invariants / invalid state can be corrupted - when creating new()
                 - FailFast - adding guard clause in constructor
             7. Never return null
-     
+
+        REFACTORING 1:
+            1. CQS
+            2. new() -> anything needs to be set at the time of new(ing)?
+            3. can the state of class be modified? get; set; empty?
+            4. returning null values
+            5. should fields/properties be accessed outside?
+
+             - remove Event for when reading. Not necessary
+             - string Save() => returns path => but it's command, should be void, Add new method GetFileName();
+             - invariants - protect invariatns, invalid state when creating new() because WorkingDirectory could be set to empty
+             - public string WorkingDirectory { get; set; } => new FileStire() needs WorkingDir to be set, so set in constructor
+             - public string Read(id) => id unknown, should it return null? Empty.String()?, is null valid sometimes, and other times not valid?
+
+            Returning Null value - should/shouldn't - for purpose of not returning null, null is bad
+                1. Tester/Doer -> IfExists(int id) => inside Read() - not thread safe, other thread removed id
+                2. TryRead -> bool TryRead(int id, out string msg) 
+                      - returns false if not found - not very much OOP (not fluent interface ref/out)
+                      - addition complex type to hold msg and error leads to more problems
+                3. Maybe -> collection of 0 or 1 elements inside it, Maybe<T> only able to have 0 or 1 elements - see Maybe.cs
+
+
+        ----------------------------------------------------------------------------------------------------------------------
         2. SRP - how do you define SRP?
             - a class should have only one reason to change (caching, writing, reading)
             - FileStore - caching can change, logging can change, storing - bad! (Logging, Caching, Storage, Orchastration) => may change
@@ -50,6 +72,8 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 2. then start looking for common behavior and putting it into interface as commonalities 
                 3. Rule of 3:  common cases at least - until you introduce abstraction
 
+
+        ----------------------------------------------------------------------------------------------------------------------
         3. OCP - open for extendiblity/closed for modification - once used by clients it shouldn't be changed
             - how can you modify behaviour if you can not change/modify original code?
             - composition over inheritance
@@ -59,39 +83,25 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             FIX:
                 1. virtual - abstract classes/inheritance, make methods virtual so that FileLogger can be extended etc
 
+        REFACTORING 2:
+            1. FileStore renamed to MessageStore
+            2. public class MessageStore(FileStore fs, Cache c, Logger l) : IStoreWriter
+            3. created caching, logger etc
+            4. DirectoryInfo for WorkingDirectory instead of string
+
+
+        ----------------------------------------------------------------------------------------------------------------------
         4. LSP - subtypes must be substitutable for their base type
             Violating LSP
             - often violated by attempts to remove features
             - Ex: ReadOnlyCollection<T> : ICollection => throw new NotImplementedException - breaks LSP
             - Ex: Downcasting - when you do a lot of downcasts
             - Ex: Extracted interfaces - vs generates interface for you
-                 
 
-    Refactoring 1:   
-        1. CQS
-        2. new() -> anything needs to be set at the time of new(ing)?
-        3. can the state of class be modified? get; set; empty?
-        4. returning null values
-        5. should fields/properties be accessed outside?
-
-     - remove Event for when reading. Not necessary
-     - string Save() => returns path => but it's command, should be void, Add new method GetFileName();
-     - invariants - protect invariatns, invalid state when creating new() because WorkingDirectory could be set to empty
-     - public string WorkingDirectory { get; set; } => new FileStire() needs WorkingDir to be set, so set in constructor
-     - public string Read(id) => id unknown, should it return null? Empty.String()?, is null valid sometimes, and other times not valid?
-
-    Returning Null value - should/shouldn't - for purpose of not returning null, null is bad
-        1. Tester/Doer -> IfExists(int id) => inside Read() - not thread safe, other thread removed id
-        2. TryRead -> bool TryRead(int id, out string msg) 
-              - returns false if not found - not very much OOP (not fluent interface ref/out)
-              - addition complex type to hold msg and error leads to more problems
-        3. Maybe -> collection of 0 or 1 elements inside it, Maybe<T> only able to have 0 or 1 elements - see Maybe.cs
-
-    Refactoring 2:
-        LSP
-            - FileStore : public virtual FileInfo GetFileInfo(int id, string workingDirectory) can't be implemented by DbSotre 
-                if all these methods are extracted to interface - breaking LSP - change corectness of system
-                - client FileStore calls get FileInfo stuff, we would have to throw NotImplementedException - breaking LSP
+        REFACTORING 3:
+                - IStore => GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
+                - FileStore : public virtual FileInfo GetFileInfo(int id, string workingDirectory) can't be implemented by DbSotre 
+                    if all these methods are extracted to interface - breaking LSP - change corectness of system
 
   
         // Starting
@@ -106,11 +116,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
 
-        Refactoring
-            1. FileStore renamed to MessageStore
-            2. public class MessageStore(FileStore fs, Cache c, Logger l) : IStoreWriter
-            3. created caching, logger etc
-            4. DirectoryInfo for WorkingDirectory instead of string
+
             5. IStore => GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
     */
 
@@ -138,7 +144,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         public Maybe<string> Read(int id)
         {
-            var file = this.GetFileInfo(id);
+            var file = this.GetFileInfo(id);        // only used in FileStore, not SqlStore, SqlStore would have to throw NotImplementedException
             if (!file.Exists)                       // if (!file.Exists) => refactored out to FileStore implementation only
                 return new Maybe<string>();
             var path = file.FullName;
