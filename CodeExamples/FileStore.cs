@@ -10,8 +10,12 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             - principles - object oriented design
             - to make your more productive by making code maitainable
             - solid - addresses code smell
+            - abstractions are discovered - by looking for comminalities
 
-        1. Encapsulation - implementation hiding, used for so others can use your code easier    
+        1. Encapsulation - implementation hiding
+            WHY?: so that others can use your code easier without throwing errors because set up wrong etc
+                and should not be aware of implementation details
+
             2. Why code sucks?
                 - extremely difficult to read
                 - hard to add features
@@ -52,6 +56,8 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         ----------------------------------------------------------------------------------------------------------------------
         2. SRP - how do you define SRP?
+            WHY?: because general/large solutions leads to coupling and complexity => so be specific (SRP) - lots of small classes
+
             - a class should have only one reason to change (caching, writing, reading)
             - FileStore - caching can change, logging can change, storing - bad! (Logging, Caching, Storage, Orchastration) => may change
              FIX: take out all reasons for change and create new class for it
@@ -63,7 +69,6 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 b. StoreCache
                 c. FileStore
             - needless complexity
-            - general solutions leads to coupling and complexity => be specific (SRP)
 
             If Interface/Abstract class can be implemented by ONLY one concrete class then it's to specific
                 - this violates reuse principle (to specific)
@@ -74,7 +79,9 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
         ----------------------------------------------------------------------------------------------------------------------
-        3. OCP - open for extendiblity/closed for modification - once used by clients it shouldn't be changed
+        3. OCP - open for extendiblity/closed for modification
+            WHY?: because once used by clients it shouldn't be changed, if changed - clients will break/breaking change
+
             - how can you modify behaviour if you can not change/modify original code?
             - composition over inheritance
             - Stranggler pattern - tree taken over by other branches/tree
@@ -93,7 +100,9 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         ----------------------------------------------------------------------------------------------------------------------
         4. LSP - subtypes must be substitutable for their base type
-            - Clients should consume any implementation without changing correctness of the system
+            WHY?: because Clients should consume any implementation without changing correctness of the system
+                and should not be aware of implementation details
+
             IMPORTANT: Is it implementation detail? (GetFileInfo pertains to FileStore only)
 
             Violating LSP
@@ -109,16 +118,19 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
         ----------------------------------------------------------------------------------------------------------------------
-        5. ISP - granuality (dragon) - smaller peaces are better - 
+        5. ISP - granularity (dragon) - Interface segragation - fined grained classes
+            WHY?: Smaller peaces are better, can be reused. Easy to add features, but how do you SUBTRACT features?
+                with ISP, if client doesn't need that feature then extract it to new interface
+
             - helps solve LSP/SRP getting rid of NotImplementedException
             - lots of classes is good thing
             - provides loose coupling => IMPORTANT - client defines what it needs
             - ROLE interfaces over header interfaces - Interfaces should be designed for Roles - define it's memebers (one role => extreme => good)
 
-
-
-
-
+        REFACTORING 4:
+                - GetFileInfo - shouldn't rely on IStore - only client FileStore requires GetFileInfo, so ISP is useful
+                - this.FileLocator : IFileLocator => GetFileInfo(id), no other clients depend on GetFileInfo of IStore so it's removed
+                - Role Interfaces - 
 
 
 
@@ -150,7 +162,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             this.workingDirectory = workingDirectory;
         }
 
-        //public Write(string path, string message) => id is more abstract, relies on Id
+        // public Write(string path, string message) => id is more abstract, relies on Id
         // GetFileInfo is concrete method in FileStore so it can be called within
         public void Save(int id, string message)
         {
@@ -171,6 +183,32 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
         {
             return new FileInfo(
                 Path.Combine(this.workingDirectory.FullName, id + ".txt"));
+        }
+    }
+
+
+    // Composition
+    // - work well with CQS - commands
+    // Better than inheritance because it allows multiple inheritance
+    // 2 ways to achieve composition
+    //  - Composite pattern
+    //  - Decorator pattern
+    // MessageStore can now create new CompositeStoreWriter() => one line Save() calling all Save() IStoreWriters implementations
+    public class CompositeStoreWriter : IStoreWriter
+    {
+        private readonly IStoreWriter[] writers;
+
+        public CompositeStoreWriter(params IStoreWriter[] writers)
+        {
+            this.writers = writers;
+        }
+
+        public void Save(int id, string message)
+        {
+            foreach (var storeWriter in this.writers)
+            {
+                storeWriter.Save(id, message);
+            }
         }
     }
 

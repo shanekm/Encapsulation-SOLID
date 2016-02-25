@@ -22,7 +22,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             if (cache.TryGetValue(id, out retVal))
                 return retVal;
 
-            retVal = reader.Read(id);
+            retVal = reader.Read(id); // Decorator
             if (retVal.Any())
                 cache.AddOrUpdate(id, retVal, (i, s) => retVal);
 
@@ -31,7 +31,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         public void Save(int id, string message)
         {
-            writer.Save(id, message);
+            writer.Save(id, message); // Decorator
             var m = new Maybe<string>(message);
             cache.AddOrUpdate(id, m, (i, s) => m);
         }

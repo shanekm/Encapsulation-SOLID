@@ -27,7 +27,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             return retVal;
         }
 
-        public void Save(int id, string message)
+        public void Save(int id, string message) // Decorator
         {
             log.Information("Saving message {id}.", id);
             writer.Save(id, message);
