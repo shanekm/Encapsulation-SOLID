@@ -42,6 +42,12 @@
     <Reference Include="Ploeh.AutoFixture.Xunit">
       <HintPath>..\packages\AutoFixture.Xunit.3.6.6\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog">
+      <HintPath>..\packages\Serilog.0.9.1\lib\net45\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.FullNetFx">
+      <HintPath>..\packages\Serilog.0.9.1\lib\net45\Serilog.FullNetFx.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -58,9 +64,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileStore.cs" />
-    <Compile Include="FileStoreUnitTests.cs" />
+    <Compile Include="Abstract\IFileLocator.cs" />
+    <Compile Include="Abstract\IStoreReader.cs" />
+    <Compile Include="Abstract\IStoreWriter.cs" />
+    <Compile Include="MessageStore.cs" />
+    <Compile Include="MessageStoreUnitTests.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpySink.cs" />
+    <Compile Include="SqlStore.cs" />
+    <Compile Include="StoreCache.cs" />
+    <Compile Include="StoreLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

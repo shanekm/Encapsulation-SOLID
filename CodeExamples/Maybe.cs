@@ -13,12 +13,12 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         public Maybe()
         {
-            this.values = new T[0]; // only 1 element
+            this.values = new T[0];
         }
 
         public Maybe(T value)
         {
-            this.values = new[] { value }; // only 1 element
+            this.values = new[] { value };
         }
 
         public IEnumerator<T> GetEnumerator()

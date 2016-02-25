@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Ploeh.Samples.Encapsulation.CodeExamples
 {
@@ -15,7 +9,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             - not a library
             - principles - object oriented design
             - to make your more productive by making code maitainable
-            - solid addresses code smell
+            - solid - addresses code smell
 
         1. Encapsulation - implementation hiding, used for so others can use your code easier    
             2. Why code sucks?
@@ -46,11 +40,39 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 a. StoreLogger
                 b. StoreCache
                 c. FileStore
+            - needless complexity
+            - general solutions leads to coupling and complexity => be specific (SRP)
 
-    Refactoring:   
+            If Interface/Abstract class can be implemented by ONLY one concrete class then it's to specific
+                - this violates reuse principle (to specific)
+            FIX:    
+                1. Start by creating concrete class behariour
+                2. then start looking for common behavior and putting it into interface as commonalities 
+                3. Rule of 3:  common cases at least - until you introduce abstraction
+
+        3. OCP - open for extendiblity/closed for modification - once used by clients it shouldn't be changed
+            - how can you modify behaviour if you can not change/modify original code?
+            - composition over inheritance
+            - Stranggler pattern - tree taken over by other branches/tree
+            - [Obsolete("message", true/false error) - eventually getting rid of old class. Letting know clients by warning or error during build
+
+            FIX:
+                1. virtual - abstract classes/inheritance, make methods virtual so that FileLogger can be extended etc
+
+        4. LSP - subtypes must be substitutable for their base type
+            Violating LSP
+            - often violated by attempts to remove features
+            - Ex: ReadOnlyCollection<T> : ICollection => throw new NotImplementedException - breaks LSP
+            - Ex: Downcasting - when you do a lot of downcasts
+            - Ex: Extracted interfaces - vs generates interface for you
+                 
+
+    Refactoring 1:   
         1. CQS
-        2. new() -> can the state of class be modified? get; set; empty?
-        3. returning null values
+        2. new() -> anything needs to be set at the time of new(ing)?
+        3. can the state of class be modified? get; set; empty?
+        4. returning null values
+        5. should fields/properties be accessed outside?
 
      - remove Event for when reading. Not necessary
      - string Save() => returns path => but it's command, should be void, Add new method GetFileName();
@@ -65,90 +87,69 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
               - addition complex type to hold msg and error leads to more problems
         3. Maybe -> collection of 0 or 1 elements inside it, Maybe<T> only able to have 0 or 1 elements - see Maybe.cs
 
+    Refactoring 2:
+        LSP
+            - FileStore : public virtual FileInfo GetFileInfo(int id, string workingDirectory) can't be implemented by DbSotre 
+                if all these methods are extracted to interface - breaking LSP - change corectness of system
+                - client FileStore calls get FileInfo stuff, we would have to throw NotImplementedException - breaking LSP
 
+  
+        // Starting
+        public class FileStore
+        {
+            public string WorkingDirectory { get; set; } // necessary when new()
+            public void Save(int id, string message)
+            public string Read(int id)                  // This method may or may not return a string 
+                                                        // public string Read(int id) string could be null, empty etc
+            public string GetFileName(int id)  
+        }
+
+
+
+        Refactoring
+            1. FileStore renamed to MessageStore
+            2. public class MessageStore(FileStore fs, Cache c, Logger l) : IStoreWriter
+            3. created caching, logger etc
+            4. DirectoryInfo for WorkingDirectory instead of string
+            5. IStore => GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
     */
 
-    public class FileStore
+    public class FileStore : IFileLocator, IStoreWriter, IStoreReader
     {
-        public FileStore(string workingDirectory)
+        private readonly DirectoryInfo workingDirectory;
+
+        public FileStore(DirectoryInfo workingDirectory)
         {
             if (workingDirectory == null)
                 throw new ArgumentNullException("workingDirectory");
-            if (!Directory.Exists(workingDirectory))
+            if (!workingDirectory.Exists)
                 throw new ArgumentException("Boo", "workingDirectory");
 
-            this.WorkingDirectory = workingDirectory;
+            this.workingDirectory = workingDirectory;
         }
 
-        public string WorkingDirectory { get; private set; } // this used to be get;set; necessary when new()
-
-        public void Save(int id, string message) 
+        //public Write(string path, string message) => id is more abstract, relies on Id
+        // GetFileInfo is concrete method in FileStore so it can be called within
+        public void Save(int id, string message)
         {
-            var path = this.GetFileName(id);
+            var path = this.GetFileInfo(id).FullName;
             File.WriteAllText(path, message);
         }
 
-        // This method may or may not return a string
-        public Maybe<string> Read(int id) // public string Read(int id) string could be null, empty etc
+        public Maybe<string> Read(int id)
         {
-            var path = this.GetFileName(id);
-            if (!File.Exists(path))
+            var file = this.GetFileInfo(id);
+            if (!file.Exists)                       // if (!file.Exists) => refactored out to FileStore implementation only
                 return new Maybe<string>();
-            var message = File.ReadAllText(path);
-            return new Maybe<string>(message);
+            var path = file.FullName;
+            return new Maybe<string>(File.ReadAllText(path));
         }
 
-        public string GetFileName(int id)
+        public FileInfo GetFileInfo(int id)         // GetFileInfo only pertains to FileStore
         {
-            return Path.Combine(this.WorkingDirectory, id + ".txt");
+            return new FileInfo(
+                Path.Combine(this.workingDirectory.FullName, id + ".txt"));
         }
     }
 
-    public class StoreCache
-    {
-        private readonly ConcurrentDictionary<int, string> cache;
-
-        public StoreCache()
-        {
-            this.cache = new ConcurrentDictionary<int, string>();
-        }
-
-        public void AddOrUpdate(int id, string message)
-        {
-            this.cache.AddOrUpdate(id, message, (i, s) => message);
-        }
-
-        public string GetOrAdd(int id, Func<int, string> messageFactory)
-        {
-            return this.cache.GetOrAdd(id, messageFactory);
-        }
-    }
-
-    public class StoreLogger
-    {
-        public void Saving(int id)
-        {
-            Log.Information("Saving message {id}.", id);
-        }
-
-        public void Saved(int id)
-        {
-            Log.Information("Saved message {id}.", id);
-        }
-
-        public void Reading(int id)
-        {
-            Log.Debug("Reading message {id}.", id);
-        }
-
-        public void DidNotFind(int id)
-        {
-            Log.Debug("No message {id} found.", id);
-        }
-
-        public void Returning(int id)
-        {
-            Log.Debug("Returning message {id}.", id);
-        }
-    }
 }
