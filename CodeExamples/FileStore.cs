@@ -82,6 +82,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
             FIX:
                 1. virtual - abstract classes/inheritance, make methods virtual so that FileLogger can be extended etc
+                2. Strategy / Decorator / Composition patterns to allow for OCP
 
         REFACTORING 2:
             1. FileStore renamed to MessageStore
@@ -92,6 +93,9 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         ----------------------------------------------------------------------------------------------------------------------
         4. LSP - subtypes must be substitutable for their base type
+            - Clients should consume any implementation without changing correctness of the system
+            IMPORTANT: Is it implementation detail? (GetFileInfo pertains to FileStore only)
+
             Violating LSP
             - often violated by attempts to remove features
             - Ex: ReadOnlyCollection<T> : ICollection => throw new NotImplementedException - breaks LSP
@@ -99,11 +103,26 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             - Ex: Extracted interfaces - vs generates interface for you
 
         REFACTORING 3:
-                - IStore => GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
+                - GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
                 - FileStore : public virtual FileInfo GetFileInfo(int id, string workingDirectory) can't be implemented by DbSotre 
                     if all these methods are extracted to interface - breaking LSP - change corectness of system
 
-  
+
+        ----------------------------------------------------------------------------------------------------------------------
+        5. ISP - granuality (dragon) - smaller peaces are better - 
+            - helps solve LSP/SRP getting rid of NotImplementedException
+            - lots of classes is good thing
+            - provides loose coupling => IMPORTANT - client defines what it needs
+            - ROLE interfaces over header interfaces - Interfaces should be designed for Roles - define it's memebers (one role => extreme => good)
+
+
+
+
+
+
+
+
+
         // Starting
         public class FileStore
         {
@@ -114,10 +133,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             public string GetFileName(int id)  
         }
 
-
-
-
-            5. IStore => GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
+            
     */
 
     public class FileStore : IFileLocator, IStoreWriter, IStoreReader
