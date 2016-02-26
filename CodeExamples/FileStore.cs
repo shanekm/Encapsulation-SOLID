@@ -12,7 +12,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             5. returning null values: (Tester/Doer, TryRead, Maybe<T>)
             6. should fields/properties be accessed outside?
             7. Pastel's Law -> IN broad / OUT specific (stronger guarantees are good)
-            8. Is this a details of the component used/injected or this class? 
+            8. Is this a details of the component used/injected or implementation of this class? 
             9. Does class have only one reason to change? or other components may change too?
 
         SOLID - why? - maintance
