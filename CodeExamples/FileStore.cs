@@ -4,6 +4,17 @@ using System.IO;
 namespace Ploeh.Samples.Encapsulation.CodeExamples
 {
     /* 
+        QUESTIONS TO ASK WHEN REFACTORING:
+            1. new() -> anything needs to be set at the time of new(ing)?
+            2. Protect invariants (guard clauses) - FailFast
+            3. CQS -> return void : Commands / return T Queries
+            4. can the state of class be modified? get; set; empty?
+            5. returning null values: (Tester/Doer, TryRead, Maybe<T>)
+            6. should fields/properties be accessed outside?
+            7. Pastel's Law -> IN broad / OUT specific (stronger guarantees are good)
+            8. Is this a details of the component used/injected or this class? 
+            9. Does class have only one reason to change? or other components may change too?
+
         SOLID - why? - maintance
             - not a framework
             - not a library
@@ -34,15 +45,6 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             7. Never return null
 
         REFACTORING 1:
-            1. new() -> anything needs to be set at the time of new(ing)?
-            2. Protect invariants (guard clauses)
-            3. CQS -> return void : Commands / return T Queries
-            4. can the state of class be modified? get; set; empty?
-            5. returning null values
-            6. should fields/properties be accessed outside?
-            7. Pastel's Law -> IN broad / OUT specific (stronger guarantees are good)
-            8. Is this a details of the component used/injected or this class? 
-
              - remove Event for when reading. Not necessary
              - string Save() => returns path => but it's command, should be void, Add new method GetFileName();
              - invariants - protect invariatns, invalid state when creating new() because WorkingDirectory could be set to empty
@@ -96,10 +98,10 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 2. Strategy / Decorator / Composition patterns to allow for OCP
 
         REFACTORING 2:
-            1. FileStore renamed to MessageStore
-            2. public class MessageStore(FileStore fs, Cache c, Logger l) : IStoreWriter
-            3. created caching, logger etc
-            4. DirectoryInfo for WorkingDirectory instead of string
+            - FileStore renamed to MessageStore
+            - public class MessageStore(FileStore fs, Cache c, Logger l) : IStoreWriter
+            - created caching, logger etc
+            - DirectoryInfo for WorkingDirectory instead of string
 
 
         ----------------------------------------------------------------------------------------------------------------------
