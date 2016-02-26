@@ -34,11 +34,14 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             7. Never return null
 
         REFACTORING 1:
-            1. CQS
-            2. new() -> anything needs to be set at the time of new(ing)?
-            3. can the state of class be modified? get; set; empty?
-            4. returning null values
-            5. should fields/properties be accessed outside?
+            1. new() -> anything needs to be set at the time of new(ing)?
+            2. Protect invariants (guard clauses)
+            3. CQS -> return void : Commands / return T Queries
+            4. can the state of class be modified? get; set; empty?
+            5. returning null values
+            6. should fields/properties be accessed outside?
+            7. Pastel's Law -> IN broad / OUT specific (stronger guarantees are good)
+            8. Is this a details of the component used/injected or this class? 
 
              - remove Event for when reading. Not necessary
              - string Save() => returns path => but it's command, should be void, Add new method GetFileName();
@@ -55,7 +58,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
         ----------------------------------------------------------------------------------------------------------------------
-        2. SRP - how do you define SRP?
+        2. SRP (Single responsibility principle) - how do you define SRP?
             WHY?: because general/large solutions leads to coupling and complexity => so be specific (SRP) - lots of small classes
 
             - a class should have only one reason to change (caching, writing, reading)
@@ -79,7 +82,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
         ----------------------------------------------------------------------------------------------------------------------
-        3. OCP - open for extendiblity/closed for modification
+        3. OCP (Open closed principle) - open for extendiblity/closed for modification
             WHY?: because once used by clients it shouldn't be changed, if changed - clients will break/breaking change
 
             - how can you modify behaviour if you can not change/modify original code?
@@ -99,7 +102,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
         ----------------------------------------------------------------------------------------------------------------------
-        4. LSP - subtypes must be substitutable for their base type
+        4. LSP (Liskov subsitution principle) - subtypes must be substitutable for their base type
             WHY?: because Clients should consume any implementation without changing correctness of the system
                 and should not be aware of implementation details
 
@@ -118,7 +121,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
         ----------------------------------------------------------------------------------------------------------------------
-        5. ISP - granularity (dragon) - Interface segragation - fined grained classes
+        5. ISP (Interface segregation principle) - granularity (dragon) - Interface segragation - fined grained classes
             WHY?: Smaller peaces are better, can be reused. Easy to add features, but how do you SUBTRACT features?
                 with ISP, if client doesn't need that feature then extract it to new interface
 
@@ -132,7 +135,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 - this.FileLocator : IFileLocator => GetFileInfo(id), no other clients depend on GetFileInfo of IStore so it's removed
                 - Role Interfaces - rewriting
 
-        6. DIP - dependency inversion principle
+        6. DIP (Dependency inversion principle) - dependency inversion principle
             WHY?: Clients own abstraction and should not care about implementation details (pluggable architecture)
 
             - high level modules should not depend on low level modules
