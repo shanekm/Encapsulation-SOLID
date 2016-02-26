@@ -33,7 +33,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 - maintainability difficut
                 - more time spent reading than writing code
             3. Make API's understandable
-            4. CQS
+            4. CQS - encapsulation technique
                 Commands: return void (hide side effects)
                 Query: return objects T or T[]
             5. Postel's Law - giving guarantess when OUT, be tolarent when IN
