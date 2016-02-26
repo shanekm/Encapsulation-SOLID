@@ -24,8 +24,8 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             - abstractions are discovered - by looking for comminalities
 
         1. Encapsulation - implementation hiding
-            WHY?: so that others can use your code easier without throwing errors because set up wrong etc
-                and should not be aware of implementation details
+            WHY?: How do I get it so it won't get in invalid state so that others can use your code easier 
+                without throwing errors because set up wrong etc and should not be aware of implementation details
 
             2. Why code sucks?
                 - extremely difficult to read
