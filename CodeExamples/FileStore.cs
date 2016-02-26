@@ -5,7 +5,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 {
     /* 
         QUESTIONS TO ASK WHEN REFACTORING:
-            1. new() -> anything needs to be set at the time of new(ing)?
+            1. new() -> anything needs to be set at the time of new(ing)? How to I prevent this class to be in invalid state?
             2. Protect invariants (guard clauses) - FailFast
             3. CQS -> return void : Commands / return T Queries
             4. can the state of class be modified? get; set; empty?
