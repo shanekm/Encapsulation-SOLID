@@ -60,9 +60,10 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
         ----------------------------------------------------------------------------------------------------------------------
         2. SRP (Single responsibility principle) - how do you define SRP?
             WHY?: because general/large solutions leads to coupling and complexity => so be specific (SRP) - lots of small classes
-
-            - a class should have only one reason to change (caching, writing, reading)
+                A class should have only one reason to change (caching, writing, reading)
+            
             - FileStore - caching can change, logging can change, storing - bad! (Logging, Caching, Storage, Orchastration) => may change
+
              FIX: take out all reasons for change and create new class for it
                 a. StoreLogger() => Saving(int id), Saved(int id), Reading(int id) etc
                 b. StoreCache() => AddOrUpdate, GetOrAdd etc
