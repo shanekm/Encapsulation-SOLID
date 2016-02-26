@@ -60,7 +60,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
 
         ----------------------------------------------------------------------------------------------------------------------
-        2. SRP (Single responsibility principle) - how do you define SRP?
+        2. SRP (Single responsibility principle) - be specific / reuse - start extracting granual common behaviour
             WHY?: because general/large solutions leads to coupling and complexity => so be specific (SRP) - lots of small classes
                 A class should have only one reason to change (caching, writing, reading)
             
