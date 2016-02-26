@@ -130,11 +130,24 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
         REFACTORING 4:
                 - GetFileInfo - shouldn't rely on IStore - only client FileStore requires GetFileInfo, so ISP is useful
                 - this.FileLocator : IFileLocator => GetFileInfo(id), no other clients depend on GetFileInfo of IStore so it's removed
-                - Role Interfaces - 
+                - Role Interfaces - rewriting
+
+        6. DIP - dependency inversion principle
+            WHY?: Clients own abstraction and should not care about implementation details (pluggable architecture)
+
+            - high level modules should not depend on low level modules
+            - abstraction should not depend opon details / details should not depend on abstraction
+            - composition - better than inheritance because allows for multiple inheritance (implement multiple interfaces)
+                    a. composite pattern
+                    b. decorator pattern
+
+        REFACTORING 5:
+                - Logger implements Writer/Reader
+                - Cache implements Writer/Reader
+                - Using decorator and composite pattern one calls another and build from the top (see unit tests)
 
 
-
-
+        ----------------------------------------------------------------------------------------------------------------------
         // Starting
         public class FileStore
         {

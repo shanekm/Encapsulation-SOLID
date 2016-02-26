@@ -19,7 +19,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
         public Maybe<string> Read(int id)
         {
             log.Debug("Reading message {id}.", id);
-            var retVal = reader.Read(id);
+            var retVal = reader.Read(id); // Decorator => call Cache
             if (retVal.Any())
                 log.Debug("Returning message {id}.", id);
             else
@@ -30,7 +30,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
         public void Save(int id, string message) // Decorator
         {
             log.Information("Saving message {id}.", id);
-            writer.Save(id, message);
+            writer.Save(id, message); // => call Cache
             log.Information("Saved message {id}.", id);
         }
     }

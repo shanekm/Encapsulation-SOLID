@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Encapsulation.CodeExamples
 {
-    public class MessageStore
+    public class MessageStore // Entry Point
     {
         private readonly IFileLocator fileLocator;
         private readonly IStoreWriter writer;
@@ -38,7 +33,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         public Maybe<string> Read(int id)
         {
-            return this.reader.Read(id);
+            return this.reader.Read(id); // Decorator => call Logger
         }
 
         public FileInfo GetFileInfo(int id)

@@ -18,11 +18,11 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         public Maybe<string> Read(int id)
         {
-            Maybe<string> retVal;
+            Maybe<string> retVal; // Checking here, message doesn't have to be passed in
             if (cache.TryGetValue(id, out retVal))
                 return retVal;
 
-            retVal = reader.Read(id); // Decorator
+            retVal = reader.Read(id); // Decorator => call FileStore
             if (retVal.Any())
                 cache.AddOrUpdate(id, retVal, (i, s) => retVal);
 
@@ -31,7 +31,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
         public void Save(int id, string message)
         {
-            writer.Save(id, message); // Decorator
+            writer.Save(id, message); // Decorator => call FileStore
             var m = new Maybe<string>(message);
             cache.AddOrUpdate(id, m, (i, s) => m);
         }
