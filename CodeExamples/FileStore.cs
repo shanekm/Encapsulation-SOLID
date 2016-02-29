@@ -166,6 +166,10 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                     a. composite pattern
                     b. decorator pattern
 
+            FIX:
+                1. IoC
+                2. Decorator/composite pattern
+
         REFACTORING 5:
                 - Logger implements Writer/Reader
                 - Cache implements Writer/Reader
