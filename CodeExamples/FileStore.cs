@@ -121,12 +121,13 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             
             Fix:
                 - Each class has it's own implementation of method for calculating Area or specific calculation
-                - Tell, don't ask principle : calculateArea(Rectangle, Square) => Rectangle : Square
+                - Tell, don't ask principle : calculateArea(Rectangle, Square) => Rectangle : Square - each subclass has it's own Cacl() details
                 abstract Shape { abstract int Area() } => Area() method implemented by EACH subclass
                 Shape inherited by Square and Rectanble with property SideLength
 
                 1. each subclass implements abstract Calc() - it's own implementation detail
                 2. if it only relates to one given subclass create new interface and implement by only that class
+                3. or create an abstract method that each subclass overwrites (tells) how it does something
 
         REFACTORING 3:
                 - GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
@@ -149,6 +150,8 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 - this.FileLocator : IFileLocator => GetFileInfo(id), no other clients depend on GetFileInfo of IStore so it's removed
                 - Role Interfaces - rewriting
 
+
+        ----------------------------------------------------------------------------------------------------------------------
         6. DIP (Dependency inversion principle) - dependency inversion principle
             WHY?: Clients own abstraction and should not care about implementation details (pluggable architecture)
 
