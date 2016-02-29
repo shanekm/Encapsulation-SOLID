@@ -96,6 +96,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             FIX:
                 1. virtual - abstract classes/inheritance, make methods virtual so that FileLogger can be extended etc
                 2. Strategy / Decorator / Composition patterns to allow for OCP
+                3. PricingCalculator => list of rules (Strategy) injected into Calculator
 
         REFACTORING 2:
             - FileStore renamed to MessageStore
@@ -116,6 +117,16 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             - Ex: ReadOnlyCollection<T> : ICollection => throw new NotImplementedException - breaks LSP
             - Ex: Downcasting - when you do a lot of downcasts
             - Ex: Extracted interfaces - vs generates interface for you
+            - Ex: if/else smells => if Manager PringManager else PrintEmployee where Manager : Employee
+            
+            Fix:
+                - Each class has it's own implementation of method for calculating Area or specific calculation
+                - Tell, don't ask principle : calculateArea(Rectangle, Square) => Rectangle : Square
+                abstract Shape { abstract int Area() } => Area() method implemented by EACH subclass
+                Shape inherited by Square and Rectanble with property SideLength
+
+                1. each subclass implements abstract Calc() - it's own implementation detail
+                2. if it only relates to one given subclass create new interface and implement by only that class
 
         REFACTORING 3:
                 - GetFileInfo pertains to FileStore not other impelmentations (SqlStore : otherwise NotImpelmentedException)
