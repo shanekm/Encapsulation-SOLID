@@ -172,7 +172,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                 - System.Date - predicate system classes
 
             FIX:
-                1. IoC
+                1. IoC (constructor, property or parameter injection)
                 2. Decorator/composite pattern
 
         REFACTORING 5:
