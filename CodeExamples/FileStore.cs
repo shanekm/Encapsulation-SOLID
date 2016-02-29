@@ -145,6 +145,11 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             - provides loose coupling => IMPORTANT - client defines what it needs
             - ROLE interfaces over header interfaces - Interfaces should be designed for Roles - define it's memebers (one role => extreme => good)
 
+            FIX:
+                1. functional interfaces / Role interfaces
+                2. create new interface for unit testing only => ISettingsConfiguration and ISettingsConfiguration2 for unit testing
+                3. IConfiguration : IApplication (inheritance of interfaces) - Extending interfaces (old stuff still works) 
+
         REFACTORING 4:
                 - GetFileInfo - shouldn't rely on IStore - only client FileStore requires GetFileInfo, so ISP is useful
                 - this.FileLocator : IFileLocator => GetFileInfo(id), no other clients depend on GetFileInfo of IStore so it's removed
