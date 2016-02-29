@@ -166,6 +166,11 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
                     a. composite pattern
                     b. decorator pattern
 
+            Violating DIP:
+                - new() instances within a class - explicit
+                - static class/method calls
+                - System.Date - predicate system classes
+
             FIX:
                 1. IoC
                 2. Decorator/composite pattern
