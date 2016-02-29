@@ -95,7 +95,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
 
             FIX:
                 1. virtual - abstract classes/inheritance, make methods virtual so that FileLogger can be extended etc
-                2. Strategy / Decorator / Composition patterns to allow for OCP
+                2. Strategy / Decorator / Composition patterns to allow for OCP, OR abstract Method overriden by SubClasses
                 3. PricingCalculator => list of rules (Strategy) injected into Calculator
 
         REFACTORING 2:
