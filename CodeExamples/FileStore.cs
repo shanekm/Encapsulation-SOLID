@@ -121,7 +121,7 @@ namespace Ploeh.Samples.Encapsulation.CodeExamples
             
             Fix:
                 - Each class has it's own implementation of method for calculating Area or specific calculation
-                - Tell, don't ask principle : calculateArea(Rectangle, Square) => Rectangle : Square - each subclass has it's own Cacl() details
+                - Tell, don't ask principle : calculateArea(Rectangle, Square) => Rectangle : Square - each subclass has it's own CalculateArea() details
                 abstract Shape { abstract int Area() } => Area() method implemented by EACH subclass
                 Shape inherited by Square and Rectanble with property SideLength
 
